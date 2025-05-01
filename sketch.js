@@ -14,6 +14,8 @@ let bothHandsStartTime = null;
 let audioContext;
 let pitchSlider;
 let sourceNodes = {};
+let lastSoundTime = 0;
+const soundCooldown = 500; // 500ms cooldown between sounds
 
 function setup() {
     let canvas = createCanvas(640, 480);
@@ -33,6 +35,14 @@ function setup() {
     
     // Initialize Web Audio API
     audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    // Resume AudioContext on user interaction
+    document.addEventListener('click', () => {
+        if (audioContext.state === 'suspended') {
+            audioContext.resume().then(() => {
+                console.log('AudioContext resumed');
+            });
+        }
+    }, { once: true });
     
     // Load audio buffers for pitch shifting
     catData.forEach(cat => {
@@ -40,7 +50,7 @@ function setup() {
         loadAudioBuffer(audioElement, cat.sound);
     });
     
-    // Reset pitch when slider is manually adjusted
+    // Log pitch changes
     pitchSlider.addEventListener('input', () => {
         console.log(`Pitch set to: ${pitchSlider.value}`);
     });
@@ -57,7 +67,8 @@ function loadAudioBuffer(audioElement, soundId) {
         .then(response => response.arrayBuffer())
         .then(arrayBuffer => audioContext.decodeAudioData(arrayBuffer))
         .then(audioBuffer => {
-            sourceNodes[soundId] = { buffer: audioBuffer };
+            sourceNodes[soundId] = { buffer: audioBuffer, source: null };
+            console.log(`Audio buffer loaded for ${soundId}`);
         })
         .catch(err => console.error(`Error loading audio for ${soundId}:`, err));
 }
@@ -70,26 +81,50 @@ function loadCat(index) {
     newCat.parent(catContainer);
     newCat.size(250, 250);
     
+    // Reset pitch slider to default (1.0)
     pitchSlider.value = 1.0;
 }
 
 function playSound(soundId) {
+    const currentTime = Date.now();
+    if (currentTime - lastSoundTime < soundCooldown) {
+        return; // Prevent rapid sound triggers
+    }
+    
     if (!sourceNodes[soundId] || !sourceNodes[soundId].buffer) {
         console.warn(`Audio buffer for ${soundId} not loaded yet`);
         return;
     }
     
-    const source = audioContext.createBufferSource();
-    source.buffer = sourceNodes[soundId].buffer;
+    // Stop any existing source for this sound
+    if (sourceNodes[soundId].source) {
+        sourceNodes[soundId].source.stop();
+        sourceNodes[soundId].source = null;
+    }
     
-    const pitch = parseFloat(pitchSlider.value);
-    source.playbackRate.value = pitch; // This affects speed, so we adjust duration below
-    
-    
-    source.start(0, 0, source.buffer.duration / pitch);
-    
-    source.connect(audioContext.destination);
-    source.start();
+    try {
+        const source = audioContext.createBufferSource();
+        source.buffer = sourceNodes[soundId].buffer;
+        
+        // Apply pitch shift
+        const pitch = parseFloat(pitchSlider.value);
+        source.playbackRate.value = pitch;
+        
+        // Adjust duration to maintain original speed
+        source.start(0, 0, source.buffer.duration / pitch);
+        
+        source.connect(audioContext.destination);
+        sourceNodes[soundId].source = source;
+        
+        // Clean up after playback
+        source.onended = () => {
+            sourceNodes[soundId].source = null;
+        };
+        
+        lastSoundTime = currentTime;
+    } catch (err) {
+        console.error(`Error playing sound ${soundId}:`, err);
+    }
 }
 
 function draw() {
