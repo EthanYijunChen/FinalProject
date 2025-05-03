@@ -50,6 +50,8 @@ function setup() {
         console.log(`Pitch set to: ${pitchSlider.value}`);
     });
     
+    document.getElementById('switch-cat-button').addEventListener('click', switchCat);
+    
     loadCat(currentCatIndex);
 }
 
