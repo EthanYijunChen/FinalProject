@@ -5,18 +5,14 @@
 }
 
 body {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    background: linear-gradient(135deg, #f5e8e4, #e4f0f5);
-    font-family: 'Arial', sans-serif;
+    font-family: 'Comic Neue', Arial, sans-serif;
+    transition: background 0.5s ease;
 }
 
 #canvas-container {
     position: relative;
-    text-align: center;
+    width: 640px;
+    height: 480px;
 }
 
 #cat-container {
@@ -24,73 +20,128 @@ body {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+    z-index: 10;
 }
 
 .cat-image {
     width: 250px;
     display: block;
     filter: grayscale(100%) brightness(120%);
-    animation: float 6s ease-in-out infinite;
     transition: all 0.3s ease;
-    transform: translateY(var(--y)) scale(1);
+    transform: scale(1);
+    will-change: transform;
 }
 
 .cat-image.squished {
-    transform: translateY(var(--y)) scale(0.9, 0.8);
+    transform: scale(0.9, 0.8);
     filter: grayscale(0%) brightness(100%);
 }
 
-@keyframes float {
-    0% { --y: 0px; }
-    50% { --y: -20px; }
-    100% { --y: 0px; }
+.cat-image.squished-left {
+    transform: scale(0.8, 0.9);
+    filter: grayscale(0%) brightness(100%);
 }
 
-#ball {
-    width: 30px;
-    height: 30px;
-    background-color: #ff6347;
-    border-radius: 50%;
+#cat-name {
     position: absolute;
+    top: calc(50% + 150px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255, 255, 255, 0.9);
+    padding: 12px 24px;
+    border-radius: 16px;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #333;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    transition: opacity 0.3s ease;
+    z-index: 5;
+}
+
+#cat-name.amatic-sc { font-family: 'Amatic SC', cursive; }
+#cat-name.bubblegum-sans { font-family: 'Bubblegum Sans', cursive; }
+#cat-name.chewy { font-family: 'Chewy', cursive; }
+#cat-name.gochi-hand { font-family: 'Gochi Hand', cursive; }
+#cat-name.patrick-hand { font-family: 'Patrick Hand', cursive; }
+
+.decoration {
+    position: absolute;
+    width: 50px;
+    height: 50px;
     pointer-events: none;
-    transition: transform 0.1s ease;
+    z-index: 2;
+}
+
+#left-hand, #right-hand {
+    width: 50px;
+    height: 50px;
+    transition: transform 0.1s ease, opacity 0.2s ease;
+    opacity: 0.8;
+    z-index: 15;
+}
+
+#left-hand.visible, #right-hand.visible {
+    opacity: 1;
 }
 
 #pitch-control {
-    margin-top: 20px;
     display: flex;
     align-items: center;
     gap: 10px;
-    color: #333;
+    background: rgba(255, 255, 255, 0.8);
+    padding: 10px 20px;
+    border-radius: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#pitch-control label {
+    font-weight: 700;
 }
 
 #pitch-slider {
     width: 150px;
-    -webkit-appearance: none;
     height: 8px;
-    background: #ccc;
+    background: linear-gradient(to right, #ff6347, #ff9a76);
     border-radius: 5px;
     outline: none;
     transition: background 0.3s;
 }
 
 #pitch-slider::-webkit-slider-thumb {
-    -webkit-appearance: none;
     width: 20px;
     height: 20px;
-    background: #ff6347;
+    background: #fff;
+    border: 2px solid #ff6347;
     border-radius: 50%;
     cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 #pitch-slider::-moz-range-thumb {
     width: 20px;
     height: 20px;
-    background: #ff6347;
+    background: #fff;
+    border: 2px solid #ff6347;
     border-radius: 50%;
     cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 #pitch-slider:hover {
-    background: #aaa;
+    background: linear-gradient(to right, #e5533d, #ff8a66);
+}
+
+#instruction {
+    background: rgba(255, 255, 255, 0.8);
+    padding: 8px 16px;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #333;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+canvas {
+    display: none;
 }

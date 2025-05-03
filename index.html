@@ -4,22 +4,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pet the Cat Meme</title>
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&family=Amatic+SC:wght@400;700&family=Bubblegum+Sans&family=Chewy&family=Gochi+Hand&family=Patrick+Hand&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.2/p5.min.js"></script>
     <script src="https://unpkg.com/ml5@0.12.2/dist/ml5.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <div id="canvas-container">
+<body class="min-h-screen flex flex-col items-center justify-center">
+    <h1 class="text-4xl font-bold text-gray-800 mb-6">Pet the Meme Cats!</h1>
+    <div id="canvas-container" class="relative">
         <div id="cat-container"></div>
-        <div id="ball"></div>
+        <div id="cat-name" class="absolute"></div>
+        <div id="decorations"></div>
+        <img id="left-hand" src="leftHand.png" alt="Left Hand" class="hidden absolute pointer-events-none">
+        <img id="right-hand" src="rightHand.png" alt="Right Hand" class="hidden absolute pointer-events-none">
     </div>
-    <div id="pitch-control">
-        <label for="pitch-slider">Pitch: </label>
-        <input type="range" id="pitch-slider" min="0.5" max="2.0" step="0.1" value="1.0">
+    <div id="pitch-control" class="mt-6 flex items-center gap-4">
+        <label for="pitch-slider" class="text-gray-700 font-semibold">Pitch:</label>
+        <input type="range" id="pitch-slider" min="0.5" max="2.0" step="0.1" value="1.0" class="w-40">
     </div>
+    <div id="instruction" class="mt-4 text-gray-700 font-semibold">Overlap wrists for a while to switch cats!</div>
     <audio id="HuhCat" src="HuhCat.m4a"></audio>
     <audio id="OiiCat" src="OiiCat.m4a"></audio>
     <audio id="BababoiCat" src="BababoiCat.m4a"></audio>
     <audio id="BananaCat" src="BananaCat.m4a"></audio>
+    <audio id="MusicCat" src="MusicCat.m4a"></audio>
     <script src="sketch.js"></script>
 </body>
 </html>
